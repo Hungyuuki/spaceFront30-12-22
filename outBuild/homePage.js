@@ -128,7 +128,7 @@ const renderHTMLInFloor = (floor_id, rooms, users, oldFloorId) => __awaiter(this
             room: {
                 room_id: room.room_id,
                 room_name: room.room_name,
-                icon_images: room.icon_images
+                // icon_images: room.icon_images
             }
         });
     }
@@ -237,7 +237,7 @@ function createUsersHTMLInRoom(user) {
   </div>
   <div class="headphone button" onclick="changeStatusSpeaker(${user.user_id})">
     <i class="fa-solid fa-headphones" id="speaker-on-${user.user_id}" style="display: ${displaySpeakerOn};"></i>
-    <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.user_id}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px;" >
+    <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.user_id}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px; opacity: 0.3" >
   </div>
 </div>
         `;
@@ -318,6 +318,9 @@ const showPageFloor = (floor_id) => {
         role = user.role;
         if (user && user.login_status == CUSTOM_STATUS) {
             localStorage.setItem("custom_status", user.custom_status);
+        }
+        if (user && user.login_status == SPECIAL_STATUS) {
+            localStorage.setItem("user_status_icon", statusIcon[user.login_status]);
         }
         if (floors.floors[0] == "") {
             if (role == ROLE_ADMIN) {
@@ -412,7 +415,7 @@ function createFLoorsHTML(floors, floor_id, role) {
         //Tạo floor
         floorsHTML += createFLoorElement(floors[i], 
         //Set màu nền, click thì đỏ, ko click thì xám
-        floors[i].id == floor_id ? 'rgb(252,76,86)' : 'rgb(238, 238, 238)', 
+        floors[i].id == floor_id ? 'rgb(252,76,86); max-width: 130px' : 'rgb(238, 238, 238); max-width: 130px', 
         //set màu text, click thì trắng, ko click thì đen
         floors[i].id == floor_id ? '#ffffff' : 'rgb(61, 62, 68)', role);
     }
@@ -428,6 +431,9 @@ function createFLoorsHTML(floors, floor_id, role) {
 function createFLoorElement(floor, backgroundColor, color, role) {
     return `
   <div class="floor" style="display: inline-flex; max-width: 100px; min-width: 60px;
+  text-overflow: ellipsis; 
+  white-space: nowrap;
+  overflow: hidden;
     height: 30px;
     border-radius: 15px;
     margin: auto;
@@ -485,7 +491,7 @@ function onJoinRoomEvent(user) {
   </div>
   <div class="headphone button" onclick="changeStatusSpeaker(${user.userId})">
   <i class="fa-solid fa-headphones" id="speaker-on-${user.userId}" style="display: ${displaySpeakerOn};"></i>
-  <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px;" >
+  <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px; opacity: 0.3" >
   </div>
 </div>`;
     const userElement = document.createElement('div');
@@ -518,18 +524,23 @@ const renderUserHTML = (user) => {
     <div class="logo-user button"><img src="${user.userAvatar}"></div>
     <div id='login-status-${user.userId}' class="status-users${(user.login_status && user.statusIcon) ? '-none' : ''}" style="background-color: ${colorBackroundStatus};">
     <img src="${statusIcon[user.login_status]}"></div>
-    <h4 class="button">${user.username}</h4>
+    <h4 class="button" >${user.username}</h4>
     <div class="mic button" onclick="changeStatusMic(${user.userId})">
       <i class="fa-solid fa-microphone" style="display: ${micOn.style.display};" id="mic-on-${user.userId}"></i>
       <i class="fa-solid fa-microphone-slash" id="mic-off-${user.userId}" style="display: ${micOff.style.display};"></i>
     </div>
     <div class="headphone button" onclick="changeStatusSpeaker(${user.userId})">
       <i class="fa-solid fa-headphones" id="speaker-on-${user.userId}" style="display: ${speakerOn.style.display};"></i>
-      <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${speakerOff.style.display}; width: 20px; height: 20px;" >
+      <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${speakerOff.style.display}; width: 20px; height: 20px; opacity: 0.3" >
     </div>
   </div>
   `;
 };
+function imgError(image) {
+    image.onerror = "";
+    image.src = "/images/noimage.gif";
+    return true;
+}
 function removeUser(user) {
     if (!user.isChangeRoom && user.leave) {
         if (user.userId == localStorage.getItem('userId')) {
@@ -712,8 +723,8 @@ const onCreateFloorEvent = (floor) => {
     newFloorElement.style.zIndex = '1000';
     const lastChild = (_a = document.getElementById('floors')) === null || _a === void 0 ? void 0 : _a.lastElementChild;
     const top = lastChild.style.top;
-    const position = parseInt(top.substring(0, top.indexOf('p'))) + 60;
-    newFloorElement.style.top = `${position}px`;
+    // const position = parseInt(top.substring(0, top.indexOf('p'))) + 60;
+    // newFloorElement.style.top = `${position}px`;
     (_b = document.getElementById('floors')) === null || _b === void 0 ? void 0 : _b.appendChild(newFloorElement);
     floorIds.push(floor.floor_id);
 };
@@ -743,7 +754,7 @@ function addFloor() {
         let text = `
             <div class="add" id="add">
             <p>フロア名</p>
-            <div class="input" > <input type="text" id="input"> </div>
+            <div class="input"><input type="text" id="input"></div>
             <div class="btn">
                 <button class="cancel" onclick="cancelCreate()">キャンセル</button>
                 <button class="confirm" onclick="confirmCreate()">追加</button>
