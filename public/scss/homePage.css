@@ -410,6 +410,9 @@ width: 115px;
   width: 140px;
   text-align: left;
   color: rgb(109,113,131);
+  text-overflow: ellipsis; 
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .user .logo-user{
@@ -453,6 +456,15 @@ width: 115px;
   margin: auto;
   position: absolute;
   right: 15px;
+}
+.headphone .button img{
+  margin-left: auto;
+  color: rgb(193,195,205);
+  scale: 0.9;
+  margin: auto;
+  position: absolute;
+  right: 15px;
+  opacity: 0.8;
 } */
 /* .user .screen .button{
   margin-left: auto;

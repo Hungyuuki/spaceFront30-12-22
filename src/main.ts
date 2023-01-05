@@ -47,6 +47,7 @@ const socket: any = io(`https://spaceback.developbase.net/`, {
   },
   transports: ['websocket']
 });
+store.clear();
 if (store.get('is_login')) {
   axiosIns.get('/users/get-socket-id')
     .then((data: any) => {
@@ -988,7 +989,8 @@ ipcMain.handle("change-login-status", async (event, data) => {
     username: store.get('userName'),
     floor_id: store.get('current_floor_id'),
     status: data.login_status,
-    custom_status: data.custom_status
+    custom_status: data.custom_status,
+    special_status_icon: data.special_status_icon
   })
   return axiosIns.post(`/users/changeLoginStatus/${store.get('uid')}`, data)
     .then(function (response: any) {

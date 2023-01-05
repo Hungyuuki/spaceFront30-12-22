@@ -193,6 +193,7 @@ function changeTextColorForElement(elementId, color) {
 }
 function createUsersHTMLInRoom(user) {
     var _a, _b, _c;
+    console.log(user);
     let displayMicOn = "none";
     let displayMicOff = "inline";
     let displayStatus = '';
@@ -209,27 +210,34 @@ function createUsersHTMLInRoom(user) {
     }
     let user_login_status = (_b = statusUser[user.user_login_status]) !== null && _b !== void 0 ? _b : '';
     let user_status_icon = (_c = statusIcon[user.user_status_icon]) !== null && _c !== void 0 ? _c : '';
+    console.log(user);
     if (user.user_login_status === CUSTOM_STATUS) {
+        if (user.id === localStorage.getItem("userId")) {
+            localStorage.setItem("custom-status", user.custom_status);
+            console.log(user);
+            // localStorage.setItem("status-login", user.status_login);
+        }
+    }
+    if (user.user_login_status === SPECIAL_STATUS) {
         if (user.user_status_icon === ICON_STATUS) {
             user_status_icon = user.custom_status;
-            if (user.id === localStorage.getItem("userId")) {
-                localStorage.setItem("custom-status", user.custom_status);
-                // localStorage.setItem("status-login", user.status_login);
-            }
+            console.log(user);
+            localStorage.setItem("custom-status", user.user_status_icon);
         }
     }
     if (!user_login_status) {
         displayStatus = '-none';
         user_login_status = '';
-        if (!user_status_icon) {
-            user_status_icon = '';
-        }
     }
+    //   if (!user_status_icon){
+    //     displayStatus = '-none';
+    //     user_status_icon = '';
+    // }
     return `
   <div class="user" id="user-${user.user_id}">
   <div class="logo-user button"><img src="${user.user_avatar}"></div>
   <div id='login-status-${user.user_id}' class="status-users${displayStatus}" style="background-color: ${colorBackroundStatus};">
-  <img src="${user_login_status}"></div>
+  <img src="${user_status_icon}"></div>
   <h4 class="button">${user.user_name}</h4>
   <div class="mic button" onclick="changeStatusMic(${user.user_id})">
     <i class="fa-solid fa-microphone" style="display: ${displayMicOn};" id="mic-on-${user.user_id}"></i>
@@ -237,7 +245,7 @@ function createUsersHTMLInRoom(user) {
   </div>
   <div class="headphone button" onclick="changeStatusSpeaker(${user.user_id})">
     <i class="fa-solid fa-headphones" id="speaker-on-${user.user_id}" style="display: ${displaySpeakerOn};"></i>
-    <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.user_id}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px;" >
+    <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.user_id}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px; opacity: 0.3" >
   </div>
 </div>
         `;
@@ -334,10 +342,10 @@ const showPageFloor = (floor_id) => {
         else {
             document.querySelector('.header').innerHTML = renderHeaderHTML();
             floorIds = floors.floors[0].map((floor) => floor.id);
-            const floorsHTML = createFLoorsHTML(floors.floors[0], floor_id, user.role);
-            renderHTMLInFloor(floor_id, rooms, users, null);
+            const floorsHTML = createFLoorsHTML(floors.floors[0], floor_id, user.role); //tạo ra floor
+            renderHTMLInFloor(floor_id, rooms, users, null); //push floor id, rooms, user vào các đối tượng html đó
             document.getElementById('floors').innerHTML = floorsHTML;
-            loadStatusUser(user);
+            loadStatusUser(user); //xử lý status của từng user
         }
     });
 };
@@ -477,7 +485,7 @@ function onJoinRoomEvent(user) {
   <div class="user" id="user-${user.userId}">
   <div class="logo-user button"><img src="${user.userAvatar}"></div>
   <div id='login-status-${user.userId}' class="status-users${displayStatus}" style="background-color: ${colorBackroundStatus};">
-  <img src="${loginStatus}"></div>
+  <img src="${statusIcon[user.login_status]}"></div>
   <h4 class="button">${user.username}</h4>
   <div class="mic button" onclick="changeStatusMic(${user.userId})">
     <i class="fa-solid fa-microphone" style="display: ${displayMicOn};" id="mic-on-${user.userId}"></i>
@@ -485,7 +493,7 @@ function onJoinRoomEvent(user) {
   </div>
   <div class="headphone button" onclick="changeStatusSpeaker(${user.userId})">
   <i class="fa-solid fa-headphones" id="speaker-on-${user.userId}" style="display: ${displaySpeakerOn};"></i>
-  <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px;" >
+  <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px; opacity: 0.3" >
   </div>
 </div>`;
     const userElement = document.createElement('div');
@@ -525,7 +533,7 @@ const renderUserHTML = (user) => {
     </div>
     <div class="headphone button" onclick="changeStatusSpeaker(${user.userId})">
       <i class="fa-solid fa-headphones" id="speaker-on-${user.userId}" style="display: ${speakerOn.style.display};"></i>
-      <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${speakerOff.style.display}; width: 20px; height: 20px;" >
+      <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${speakerOff.style.display}; width: 20px; height: 20px; opacity: 0.3" >
     </div>
   </div>
   `;

@@ -190,6 +190,7 @@ function changeTextColorForElement(elementId: string, color: string) {
   }
 }
 
+
 function createUsersHTMLInRoom(user: any) {
   let displayMicOn = "none";
   let displayMicOff = "inline";
@@ -210,27 +211,31 @@ function createUsersHTMLInRoom(user: any) {
   let user_login_status = statusUser[user.user_login_status] ?? '';
   let user_status_icon = statusIcon[user.user_status_icon] ?? '';
   if (user.user_login_status === CUSTOM_STATUS) {
-    if(user.user_status_icon === ICON_STATUS){
-      user_status_icon = user.custom_status
     if (user.id === localStorage.getItem("userId")) {
       localStorage.setItem("custom-status", user.custom_status);
       // localStorage.setItem("status-login", user.status_login);
     }
   }
+  if (user.user_login_status === SPECIAL_STATUS) {
+    if(user.user_status_icon === ICON_STATUS) {
+      user_status_icon = user.custom_status;//đang bị mắc đoạn này, vế phải đang là text nên vào ảnh nên bị undefine
+      localStorage.setItem("custom-status", user.user_status_icon);
+  }
 }
 
 if (!user_login_status) {  
   displayStatus = '-none';
-  user_login_status = ''
-  if (!user_status_icon){
-    user_status_icon = ''
-  }
+  user_login_status = '';
 }
+//   if (!user_status_icon){
+//     displayStatus = '-none';
+//     user_status_icon = '';
+// }
   return `
   <div class="user" id="user-${user.user_id}">
   <div class="logo-user button"><img src="${user.user_avatar}"></div>
   <div id='login-status-${user.user_id}' class="status-users${displayStatus}" style="background-color: ${colorBackroundStatus};">
-  <img src="${user_login_status}"></div>
+  <img src="${user_status_icon}"></div>
   <h4 class="button">${user.user_name}</h4>
   <div class="mic button" onclick="changeStatusMic(${user.user_id})">
     <i class="fa-solid fa-microphone" style="display: ${displayMicOn};" id="mic-on-${user.user_id}"></i>
@@ -238,7 +243,7 @@ if (!user_login_status) {
   </div>
   <div class="headphone button" onclick="changeStatusSpeaker(${user.user_id})">
     <i class="fa-solid fa-headphones" id="speaker-on-${user.user_id}" style="display: ${displaySpeakerOn};"></i>
-    <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.user_id}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px;" >
+    <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.user_id}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px; opacity: 0.3" >
   </div>
 </div>
         `;
@@ -338,10 +343,10 @@ const showPageFloor = (floor_id: any) => {
     } else {
       document.querySelector('.header').innerHTML = renderHeaderHTML();
       floorIds = floors.floors[0].map((floor: any) => floor.id);
-      const floorsHTML = createFLoorsHTML(floors.floors[0], floor_id, user.role);
-      renderHTMLInFloor(floor_id, rooms, users, null);
-      document.getElementById('floors').innerHTML = floorsHTML;
-      loadStatusUser(user);
+      const floorsHTML = createFLoorsHTML(floors.floors[0], floor_id, user.role); //tạo ra floor
+      renderHTMLInFloor(floor_id, rooms, users, null); //push floor id, rooms, user vào các đối tượng html đó
+      document.getElementById('floors').innerHTML = floorsHTML; 
+      loadStatusUser(user); //xử lý status của từng user
     }
   })
 }
@@ -486,7 +491,7 @@ const colorBackroundStatus = colorStatus[user.login_status] ?? '';
   <div class="user" id="user-${user.userId}">
   <div class="logo-user button"><img src="${user.userAvatar}"></div>
   <div id='login-status-${user.userId}' class="status-users${displayStatus}" style="background-color: ${colorBackroundStatus};">
-  <img src="${loginStatus}"></div>
+  <img src="${statusIcon[user.login_status]}"></div>
   <h4 class="button">${user.username}</h4>
   <div class="mic button" onclick="changeStatusMic(${user.userId})">
     <i class="fa-solid fa-microphone" style="display: ${displayMicOn};" id="mic-on-${user.userId}"></i>
@@ -494,7 +499,7 @@ const colorBackroundStatus = colorStatus[user.login_status] ?? '';
   </div>
   <div class="headphone button" onclick="changeStatusSpeaker(${user.userId})">
   <i class="fa-solid fa-headphones" id="speaker-on-${user.userId}" style="display: ${displaySpeakerOn};"></i>
-  <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px;" >
+  <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px; opacity: 0.3" >
   </div>
 </div>`;
   const userElement = document.createElement('div');
@@ -534,7 +539,7 @@ const renderUserHTML = (user: any): string => {
     </div>
     <div class="headphone button" onclick="changeStatusSpeaker(${user.userId})">
       <i class="fa-solid fa-headphones" id="speaker-on-${user.userId}" style="display: ${speakerOn.style.display};"></i>
-      <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${speakerOff.style.display}; width: 20px; height: 20px;" >
+      <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.userId}" style="display: ${speakerOff.style.display}; width: 20px; height: 20px; opacity: 0.3" >
     </div>
   </div>
   `
