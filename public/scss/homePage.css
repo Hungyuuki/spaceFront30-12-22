@@ -70,29 +70,38 @@ body {
 }
 
 .sub-select {
-  margin-top: 10px;
+  margin-top: 8px;
+  margin-left: 0px;
+  /* width: 150px; */
+  gap: 4px;
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+  text-align: center;
 }
 
 .sub-select i {
-  margin-left: 20px;
+  margin-left: 10px;
 }
 
 .sub-select p {
   margin-top: 0px;
-  padding-left: 10px;
+  font-size: 12px;
+  padding-left: 5px;
 }
 
-
+.sub-select.active .button{
+  font-size: 18px;
+  margin-left: 15px;
+}
 
 .buttons button{
   border-color: #d1cfcf;
   border-radius: 5px;
   height: 30px;
-  font-weight: 900;
+  /* font-weight: 900; */
 }
+
 
 .logoheader img {
   display: block;
@@ -225,7 +234,7 @@ body {
 }
 
 .header-room i {
-  padding: 10px 10px 10px 10px;
+  padding: 5px 5px 5px 5px;
 }
 
 .relative {
@@ -252,7 +261,7 @@ body {
   border-radius: 50%;
   border: 1px solid transparent;
   position: absolute;
-  top: 4px;
+  top: 2px;
   right: 10px;
   text-align: center;
   font-size: 16px;
@@ -630,6 +639,12 @@ button {
   display: block;
   z-index: 10;
   text-align: center;
+  text-overflow: ellipsis; 
+  white-space: nowrap;
+  overflow: hidden;
+}
+#status p{
+  text-align: center;
 }
 
 
@@ -676,11 +691,14 @@ button {
   text-align: center;
 }
 .buttons {
-  padding: 10px 10px 10px 10px;
-  width: 100px;
+  padding: 5px 10px 10px 10px;
+  /* width: 100px; */
 }
 .buttons button{
-  margin: auto;
+  margin: 0px;
+  border-color: #d1cfcf;
+  border-radius: 5px;
+  height: 30px;
 
 }
 

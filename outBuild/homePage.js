@@ -29,7 +29,7 @@ const statusUser = ["離席中", "会議中", "取込中", "電話中", "外出�
 const colorStatus = ["gray", "green", "#5d0b0b", "#b5c014", "#911258", "orange", "#F3F3F3", "#555C55FF"];
 let floorIds = [];
 let role = 0;
-const statusIcon = [
+const specialStatusIcon = [
     "../static/logout.png",
     "../static/online-meeting.png",
     "../static/rush.png",
@@ -37,6 +37,7 @@ const statusIcon = [
     "../static/logout.png",
     "../static/briefcase.png"
 ];
+const customStatusIcon = "../static/custom-status.png";
 const CUSTOM_STATUS = 7;
 const SPECIAL_STATUS = 6;
 const ROLE_ADMIN = 2;
@@ -161,7 +162,7 @@ const renderHTMLInFloor = (floor_id, rooms, users, oldFloorId) => __awaiter(this
                 uid: item.uid,
                 user_login_status: item.user_login_status,
                 user_status_icon: item.user_status_icon,
-                custom_status: item.user_custom_status
+                custom_status: item.user_custom_status //text của custom status
             };
             if (result[index].users) {
                 result[index].users.push(user);
@@ -193,7 +194,6 @@ function changeTextColorForElement(elementId, color) {
 }
 function createUsersHTMLInRoom(user) {
     var _a, _b, _c;
-    console.log(user);
     let displayMicOn = "none";
     let displayMicOff = "inline";
     let displayStatus = '';
@@ -209,30 +209,22 @@ function createUsersHTMLInRoom(user) {
         displaySpeakerOff = "none";
     }
     let user_login_status = (_b = statusUser[user.user_login_status]) !== null && _b !== void 0 ? _b : '';
-    let user_status_icon = (_c = statusIcon[user.user_status_icon]) !== null && _c !== void 0 ? _c : '';
-    console.log(user);
+    let user_status_icon = (_c = specialStatusIcon[user.user_login_status]) !== null && _c !== void 0 ? _c : '';
+    //Rẽ nhánh
     if (user.user_login_status === CUSTOM_STATUS) {
+        user_login_status = user.custom_status;
         if (user.id === localStorage.getItem("userId")) {
             localStorage.setItem("custom-status", user.custom_status);
-            console.log(user);
-            // localStorage.setItem("status-login", user.status_login);
-        }
-    }
-    if (user.user_login_status === SPECIAL_STATUS) {
-        if (user.user_status_icon === ICON_STATUS) {
-            user_status_icon = user.custom_status;
-            console.log(user);
-            localStorage.setItem("custom-status", user.user_status_icon);
         }
     }
     if (!user_login_status) {
         displayStatus = '-none';
         user_login_status = '';
     }
-    //   if (!user_status_icon){
-    //     displayStatus = '-none';
-    //     user_status_icon = '';
-    // }
+    if (!user_status_icon) {
+        displayStatus = '-none';
+        user_status_icon = '';
+    }
     return `
   <div class="user" id="user-${user.user_id}">
   <div class="logo-user button"><img src="${user.user_avatar}"></div>
@@ -247,7 +239,7 @@ function createUsersHTMLInRoom(user) {
     <i class="fa-solid fa-headphones" id="speaker-on-${user.user_id}" style="display: ${displaySpeakerOn};"></i>
     <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.user_id}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px; opacity: 0.3" >
   </div>
-</div>
+  </div>
         `;
 }
 function createRoomHTML(room) {
@@ -331,7 +323,7 @@ const showPageFloor = (floor_id) => {
             if (role == ROLE_ADMIN) {
                 let elButtonAdd = 
                 // `<div class="floor add-new" style="top: 10px; background-color: black; z-index: -1;" onclick="addFloor()"><p>+</p></div>`;
-                `<svg class="floors add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
+                `<svg class="floor add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
         <circle cx="50" cy="37" r="29" fill="none" stroke-width="6"></circle>
         <line class="plus" x1="35.5" y1="38" x2="65.5" y2="38" stroke-width="6"></line>
         <line class="plus" x1="50" y1="23.5" x2="50" y2="53.5" stroke-width="6"></line>
@@ -372,7 +364,9 @@ const renderHeaderHTML = () => {
           </div>
           ${role == ROLE_ADMIN ? `
           <div id="create-room" class="buttons">
-            <button onclick="openRoomCreate()">ルームの追加</button>
+            <button onclick="openRoomCreate()" style="font-size: 10px; margin: 0px;
+            width: 76px;
+            height: 40px;">ルームの追加</button>
           </div>
           ` : ''}`;
 };
@@ -425,7 +419,9 @@ function createFLoorsHTML(floors, floor_id, role) {
         floors[i].id == floor_id ? '#ffffff' : 'rgb(61, 62, 68)', role);
     }
     if (role == ROLE_ADMIN) {
-        floorsHTML += `<svg class="floors add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
+        floorsHTML +=
+            // `<div class="floor add-new" style="top: 10px; background-color: black; z-index: -1;" onclick="addFloor()"><p>+</p></div>`;
+            `<svg class="floor add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
   <circle cx="50" cy="37" r="29" fill="none" stroke-width="6"></circle>
   <line class="plus" x1="35.5" y1="38" x2="65.5" y2="38" stroke-width="6"></line>
   <line class="plus" x1="50" y1="23.5" x2="50" y2="53.5" stroke-width="6"></line>
@@ -458,7 +454,7 @@ function onJoinRoomEvent(user) {
         oldUserElement.parentNode.removeChild(oldUserElement);
     }
     // let loginStatus = statusUser[user.login_status] ?? '';
-    let loginStatus = (_a = statusIcon[user.login_status]) !== null && _a !== void 0 ? _a : '';
+    let loginStatus = (_a = specialStatusIcon[user.login_status]) !== null && _a !== void 0 ? _a : '';
     if (user.login_status == CUSTOM_STATUS) {
         loginStatus = user.custom_status;
     }
@@ -485,7 +481,7 @@ function onJoinRoomEvent(user) {
   <div class="user" id="user-${user.userId}">
   <div class="logo-user button"><img src="${user.userAvatar}"></div>
   <div id='login-status-${user.userId}' class="status-users${displayStatus}" style="background-color: ${colorBackroundStatus};">
-  <img src="${statusIcon[user.login_status]}"></div>
+  <img src="${specialStatusIcon[user.login_status]}"></div>
   <h4 class="button">${user.username}</h4>
   <div class="mic button" onclick="changeStatusMic(${user.userId})">
     <i class="fa-solid fa-microphone" style="display: ${displayMicOn};" id="mic-on-${user.userId}"></i>
@@ -516,16 +512,16 @@ const renderUserHTML = (user) => {
     var _a, _b;
     let loginStatus = (_a = statusUser[user.login_status]) !== null && _a !== void 0 ? _a : '';
     if (user.login_status == CUSTOM_STATUS) {
-        if (user.statusIcon == ICON_STATUS) {
-            loginStatus = user.custom_status;
-        }
+        // if (user.statusIcon == ICON_STATUS) {
+        loginStatus = user.custom_status;
     }
+    // }
     const colorBackroundStatus = (_b = colorStatus[user.login_status]) !== null && _b !== void 0 ? _b : '';
     return `
   <div class="user" id="user-${user.userId}">
     <div class="logo-user button"><img src="${user.userAvatar}"></div>
     <div id='login-status-${user.userId}' class="status-users${(user.login_status && user.statusIcon) ? '-none' : ''}" style="background-color: ${colorBackroundStatus};">
-    <img src="${statusIcon[user.login_status]}"></div>
+    <img src="${specialStatusIcon[user.login_status]}"></div>
     <h4 class="button">${user.username}</h4>
     <div class="mic button" onclick="changeStatusMic(${user.userId})">
       <i class="fa-solid fa-microphone" style="display: ${micOn.style.display};" id="mic-on-${user.userId}"></i>
@@ -618,7 +614,7 @@ const onChangeStatusEvent = (user) => {
             loginStatus.src = '';
         }
         else {
-            loginStatus.src = statusIcon[user.status];
+            loginStatus.src = specialStatusIcon[user.status];
         }
         statusBackground.style.backgroundColor = colorStatus[user.status];
     }
@@ -689,13 +685,13 @@ function appendNewFloor(floor_id, old_floor_id, name) {
     newFloorElement.style.backgroundColor = '#7f7f7f';
     newFloorElement.style.zIndex = '1000';
     const numberChilds = (_a = document.getElementById('floors')) === null || _a === void 0 ? void 0 : _a.children.length;
-    // const addFloor = document.querySelector('.floor.add-new') as HTMLElement;
+    const addFloor = document.querySelector('.floor.add-new');
     let position = 0;
-    // if (numberChilds != null && addFloor != null) {
-    //   position = ((numberChilds == 1 ? 0 : numberChilds - 1) * 60);
-    //   newFloorElement.style.top = `${position}px`;
-    //   addFloor.style.top = `${position + 60}px`;
-    // }
+    if (numberChilds != null && addFloor != null) {
+        position = ((numberChilds == 1 ? 0 : numberChilds - 1) * 60);
+        newFloorElement.style.top = `${position}px`;
+        addFloor.style.top = `${position + 60}px`;
+    }
     newFloorElement.innerHTML = `
                 <button onclick ="showConfirmModelFloor(event, ${floor_id})" class="remove-floor" > x </button>
                 <p>${name}</p>

@@ -21,7 +21,7 @@ const statusUser = ["離席中", "会議中", "取込中", "電話中", "外出�
 const colorStatus = ["gray", "green", "#5d0b0b", "#b5c014", "#911258", "orange", "#F3F3F3", "#555C55FF"];
 let floorIds: any = [];
 let role: any = 0;
-const statusIcon = [
+const specialStatusIcon = [
   "../static/logout.png", 
   "../static/online-meeting.png", 
   "../static/rush.png",
@@ -29,6 +29,7 @@ const statusIcon = [
   "../static/logout.png",
   "../static/briefcase.png"
   ]
+const customStatusIcon = "../static/custom-status.png"
 
 const CUSTOM_STATUS = 7;
 const SPECIAL_STATUS = 6;
@@ -156,9 +157,9 @@ const renderHTMLInFloor = async (floor_id: any, rooms: any, users: any, oldFloor
         user_is_mic: item.user_is_mic,
         user_is_speaker: item.user_is_speaker,
         uid: item.uid,
-        user_login_status: item.user_login_status,
-        user_status_icon:item.user_status_icon,
-        custom_status: item.user_custom_status
+        user_login_status: item.user_login_status,//index của status, hiểu sai sẽ dễ truyền sai
+        user_status_icon:item.user_status_icon,//img của special status
+        custom_status: item.user_custom_status//text của custom status
       };
       if (result[index].users) {
         result[index].users.push(user);
@@ -208,18 +209,13 @@ function createUsersHTMLInRoom(user: any) {
     displaySpeakerOff = "none"
   }
 
-  let user_login_status = statusUser[user.user_login_status] ?? '';
-  let user_status_icon = statusIcon[user.user_status_icon] ?? '';
-  if (user.user_login_status === CUSTOM_STATUS) {
-    if (user.id === localStorage.getItem("userId")) {
-      localStorage.setItem("custom-status", user.custom_status);
-      // localStorage.setItem("status-login", user.status_login);
-    }
-  }
-  if (user.user_login_status === SPECIAL_STATUS) {
-    if(user.user_status_icon === ICON_STATUS) {
-      user_status_icon = user.custom_status;//đang bị mắc đoạn này, vế phải đang là text nên vào ảnh nên bị undefine
-      localStorage.setItem("custom-status", user.user_status_icon);
+let user_login_status = statusUser[user.user_login_status] ?? '';
+let user_status_icon = specialStatusIcon[user.user_login_status] ?? '';
+//Rẽ nhánh
+if (user.user_login_status === CUSTOM_STATUS) {
+  user_login_status = user.custom_status
+  if (user.id === localStorage.getItem("userId")) {
+    localStorage.setItem("custom-status", user.custom_status)
   }
 }
 
@@ -227,10 +223,10 @@ if (!user_login_status) {
   displayStatus = '-none';
   user_login_status = '';
 }
-//   if (!user_status_icon){
-//     displayStatus = '-none';
-//     user_status_icon = '';
-// }
+  if (!user_status_icon){
+    displayStatus = '-none';
+    user_status_icon = '';
+}
   return `
   <div class="user" id="user-${user.user_id}">
   <div class="logo-user button"><img src="${user.user_avatar}"></div>
@@ -245,7 +241,7 @@ if (!user_login_status) {
     <i class="fa-solid fa-headphones" id="speaker-on-${user.user_id}" style="display: ${displaySpeakerOn};"></i>
     <img src="../static/earphone.png"  class="fa-solid fa-earphones" id="speaker-off-${user.user_id}" style="display: ${displaySpeakerOff}; width: 20px; height: 20px; opacity: 0.3" >
   </div>
-</div>
+  </div>
         `;
 }
 
@@ -332,12 +328,11 @@ const showPageFloor = (floor_id: any) => {
     if (floors.floors[0] == "") {
       if (role == ROLE_ADMIN) {
         let elButtonAdd = 
-        // `<div class="floor add-new" style="top: 10px; background-color: black; z-index: -1;" onclick="addFloor()"><p>+</p></div>`;
-        `<svg class="floors add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
+        `<svg class="floor add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
         <circle cx="50" cy="37" r="29" fill="none" stroke-width="6"></circle>
         <line class="plus" x1="35.5" y1="38" x2="65.5" y2="38" stroke-width="6"></line>
         <line class="plus" x1="50" y1="23.5" x2="50" y2="53.5" stroke-width="6"></line>
-      </svg>`;
+        </svg>`;
         addElement(elButtonAdd, "floors");
       }
     } else {
@@ -374,7 +369,9 @@ const renderHeaderHTML = () => {
           </div>
           ${role == ROLE_ADMIN ? `
           <div id="create-room" class="buttons">
-            <button onclick="openRoomCreate()">ルームの追加</button>
+            <button onclick="openRoomCreate()" style="font-size: 10px; margin: 0px;
+            width: 76px;
+            height: 40px;">ルームの追加</button>
           </div>
           ` : ''}`
 }
@@ -427,7 +424,9 @@ function createFLoorsHTML(floors: any, floor_id: any, role: any) {
       role);
   }
   if (role == ROLE_ADMIN) {
-    floorsHTML += `<svg class="floors add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
+    floorsHTML += 
+    // `<div class="floor add-new" style="top: 10px; background-color: black; z-index: -1;" onclick="addFloor()"><p>+</p></div>`;
+  `<svg class="floor add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
   <circle cx="50" cy="37" r="29" fill="none" stroke-width="6"></circle>
   <line class="plus" x1="35.5" y1="38" x2="65.5" y2="38" stroke-width="6"></line>
   <line class="plus" x1="50" y1="23.5" x2="50" y2="53.5" stroke-width="6"></line>
@@ -462,7 +461,7 @@ function onJoinRoomEvent(user: any) {
   }
 
 // let loginStatus = statusUser[user.login_status] ?? '';
-let loginStatus = statusIcon[user.login_status] ?? '';
+let loginStatus = specialStatusIcon[user.login_status] ?? '';
 if (user.login_status == CUSTOM_STATUS) {
   loginStatus = user.custom_status
 }
@@ -491,7 +490,7 @@ const colorBackroundStatus = colorStatus[user.login_status] ?? '';
   <div class="user" id="user-${user.userId}">
   <div class="logo-user button"><img src="${user.userAvatar}"></div>
   <div id='login-status-${user.userId}' class="status-users${displayStatus}" style="background-color: ${colorBackroundStatus};">
-  <img src="${statusIcon[user.login_status]}"></div>
+  <img src="${specialStatusIcon[user.login_status]}"></div>
   <h4 class="button">${user.username}</h4>
   <div class="mic button" onclick="changeStatusMic(${user.userId})">
     <i class="fa-solid fa-microphone" style="display: ${displayMicOn};" id="mic-on-${user.userId}"></i>
@@ -522,16 +521,16 @@ const appendUserElement = async (user: any) => {
 const renderUserHTML = (user: any): string => {
   let loginStatus = statusUser[user.login_status] ?? '';
   if (user.login_status == CUSTOM_STATUS) {
-    if (user.statusIcon == ICON_STATUS) {
+    // if (user.statusIcon == ICON_STATUS) {
     loginStatus = user.custom_status
   }
-}
+// }
   const colorBackroundStatus = colorStatus[user.login_status] ?? '';
   return `
   <div class="user" id="user-${user.userId}">
     <div class="logo-user button"><img src="${user.userAvatar}"></div>
     <div id='login-status-${user.userId}' class="status-users${(user.login_status && user.statusIcon) ? '-none' : ''}" style="background-color: ${colorBackroundStatus};">
-    <img src="${statusIcon[user.login_status]}"></div>
+    <img src="${specialStatusIcon[user.login_status]}"></div>
     <h4 class="button">${user.username}</h4>
     <div class="mic button" onclick="changeStatusMic(${user.userId})">
       <i class="fa-solid fa-microphone" style="display: ${micOn.style.display};" id="mic-on-${user.userId}"></i>
@@ -628,7 +627,7 @@ const onChangeStatusEvent = (user: any) => {
     loginStatus.src=''
     }
     else {
-      loginStatus.src = statusIcon[user.status];
+      loginStatus.src = specialStatusIcon[user.status];
     }
     statusBackground.style.backgroundColor = colorStatus[user.status];
   }
@@ -699,13 +698,13 @@ function appendNewFloor(floor_id: any, old_floor_id: any, name: any) {
   newFloorElement.style.backgroundColor = '#7f7f7f';
   newFloorElement.style.zIndex = '1000';
   const numberChilds = document.getElementById('floors')?.children.length;
-  // const addFloor = document.querySelector('.floor.add-new') as HTMLElement;
+  const addFloor = document.querySelector('.floor.add-new') as HTMLElement;
   let position = 0;
-  // if (numberChilds != null && addFloor != null) {
-  //   position = ((numberChilds == 1 ? 0 : numberChilds - 1) * 60);
-  //   newFloorElement.style.top = `${position}px`;
-  //   addFloor.style.top = `${position + 60}px`;
-  // }
+  if (numberChilds != null && addFloor != null) {
+    position = ((numberChilds == 1 ? 0 : numberChilds - 1) * 60);
+    newFloorElement.style.top = `${position}px`;
+    addFloor.style.top = `${position + 60}px`;
+  }
   newFloorElement.innerHTML = `
                 <button onclick ="showConfirmModelFloor(event, ${floor_id})" class="remove-floor" > x </button>
                 <p>${name}</p>
