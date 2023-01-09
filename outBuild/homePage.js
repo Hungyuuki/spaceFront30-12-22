@@ -321,13 +321,11 @@ const showPageFloor = (floor_id) => {
         }
         if (floors.floors[0] == "") {
             if (role == ROLE_ADMIN) {
-                let elButtonAdd = 
-                // `<div class="floor add-new" style="top: 10px; background-color: black; z-index: -1;" onclick="addFloor()"><p>+</p></div>`;
-                `<svg class="floor add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
+                let elButtonAdd = `<svg class="floor add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
         <circle cx="50" cy="37" r="29" fill="none" stroke-width="6"></circle>
         <line class="plus" x1="35.5" y1="38" x2="65.5" y2="38" stroke-width="6"></line>
         <line class="plus" x1="50" y1="23.5" x2="50" y2="53.5" stroke-width="6"></line>
-      </svg>`;
+        </svg>`;
                 addElement(elButtonAdd, "floors");
             }
         }
@@ -364,16 +362,14 @@ const renderHeaderHTML = () => {
           </div>
           ${role == ROLE_ADMIN ? `
           <div id="create-room" class="buttons">
-            <button onclick="openRoomCreate()" style="font-size: 10px; margin: 0px;
-            width: 76px;
-            height: 40px;">ルームの追加</button>
+            <button onclick="openRoomCreate()" style="font-size: 12px; margin: 0px; width: 88px; height: 40px;">ルームの追加</button>
           </div>
           ` : ''}`;
 };
 const createRoomButton = () => {
     const createRoomButton = document.createElement('div');
     createRoomButton.setAttribute('class', 'buttons');
-    createRoomButton.innerHTML = `<button onclick="openRoomCreate()">ルームの追加</button>`;
+    createRoomButton.innerHTML = `<button style="font-size: 12px; margin: 0px; width: 88px; height: 40px;" onclick="openRoomCreate()">ルームの追加</button>`;
     return createRoomButton;
 };
 const loadStatusUser = (user) => {
@@ -739,6 +735,7 @@ const logoutRequest = () => {
     window.api.invoke('log-out', "");
 };
 function addFloor() {
+    console.log("1");
     let floor = document.getElementsByClassName("floor");
     if (floor.length > 10) {
         console.log("Fails");

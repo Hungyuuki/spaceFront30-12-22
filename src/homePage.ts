@@ -369,17 +369,15 @@ const renderHeaderHTML = () => {
           </div>
           ${role == ROLE_ADMIN ? `
           <div id="create-room" class="buttons">
-            <button onclick="openRoomCreate()" style="font-size: 10px; margin: 0px;
-            width: 76px;
-            height: 40px;">ルームの追加</button>
+            <button onclick="openRoomCreate()" style="font-size: 12px; margin: 0px; width: 88px; height: 40px;">ルームの追加</button>
           </div>
           ` : ''}`
 }
 
-const createRoomButton = () => {
+const createRoomButton = () => { 
   const createRoomButton = document.createElement('div');
   createRoomButton.setAttribute('class', 'buttons');
-  createRoomButton.innerHTML = `<button onclick="openRoomCreate()">ルームの追加</button>`
+  createRoomButton.innerHTML = `<button style="font-size: 12px; margin: 0px; width: 88px; height: 40px;" onclick="openRoomCreate()">ルームの追加</button>`
   return createRoomButton;
 }
 
@@ -755,6 +753,7 @@ const logoutRequest = () => {
 }
 
 function addFloor() {
+  console.log("1");
   let floor = document.getElementsByClassName("floor");
   if (floor.length > 10) {
     console.log("Fails");

@@ -153,7 +153,7 @@ body {
   position: relative;
   border-radius: 50%;
   border: 1px solid transparent;
-  font-size: 10px;
+  font-size: 16px;
   background-color: #dbdbdb;
 }
 .remove-floor:hover {
@@ -172,6 +172,10 @@ body {
   stroke: rgb(238,238,238);
   position: absolute;
   left: 260px;
+}
+.floors .add-new svg{
+  height: 30px;
+  width: 30px;
 }
 
 .floors .add-new .plus{
@@ -691,7 +695,7 @@ button {
   text-align: center;
 }
 .buttons {
-  padding: 5px 10px 10px 10px;
+  padding: 5px 0px 5px 8px;
   /* width: 100px; */
 }
 .buttons button{
