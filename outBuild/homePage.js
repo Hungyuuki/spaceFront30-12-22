@@ -269,7 +269,7 @@ function createRoomElement(room, users) {
             <circle cx="50" cy="40" r="30"></circle>
           </svg>
         </div>
-          <h4 class="button" style="font-size: 14px">${room.room_name} </h4>
+          <h4 class="button" style="font-size: 14px">${room.room_name}</h4>
         </div>
         <div id="info-user-room-${room.room_id}">
           <div id="your-proflie-${room.room_id}"></div>
@@ -416,8 +416,7 @@ function createFLoorsHTML(floors, floor_id, role) {
     }
     if (role == ROLE_ADMIN) {
         floorsHTML +=
-            // `<div class="floor add-new" style="top: 10px; background-color: black; z-index: -1;" onclick="addFloor()"><p>+</p></div>`;
-            `<svg class="floor add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255);" onclick="addFloor()">
+            `<svg class="floor add-new" viewBox="0 0 100 100" style="width: 40px; height: 40px; background-color: rgb(255,255,255); align-items: center;" onclick="addFloor()">
   <circle cx="50" cy="37" r="29" fill="none" stroke-width="6"></circle>
   <line class="plus" x1="35.5" y1="38" x2="65.5" y2="38" stroke-width="6"></line>
   <line class="plus" x1="50" y1="23.5" x2="50" y2="53.5" stroke-width="6"></line>
@@ -427,16 +426,9 @@ function createFLoorsHTML(floors, floor_id, role) {
 }
 function createFLoorElement(floor, backgroundColor, color, role) {
     return `
-  <div class="floor" style="display: inline-flex; max-width: 100px; min-width: 60px;
-    height: 30px;
-    border-radius: 15px;
-    margin: auto;
-    scroll-snap-align: start;
-    scroll-snap-stop: normal;
-    vertical-align: middle; 
-    background-color: ${backgroundColor}; 
-    color: ${color};
-    z-index: 1000;" 
+  <div class="floor" style=
+  " background-color: ${backgroundColor}; 
+    color: ${color};" 
     id=${floor.id} 
     onclick="showFloor(${floor.id})" >
     ${role == ROLE_ADMIN ? `<button onclick ="showConfirmModelFloor(event, ${floor.id})" class="remove-floor" > x </button>` : ''}
@@ -655,11 +647,11 @@ const onRemoveFloorEvent = (data) => __awaiter(this, void 0, void 0, function* (
         .forEach((id) => {
         document.getElementById(`${id}`).style.top = `${data.position + (60 * index++)}px`;
     });
-    if (role == ROLE_ADMIN) {
-        const addNewFloor = document.querySelector('.floor.add-new');
-        const position = data.position + (60 * index);
-        addNewFloor.style.top = `${position}px`;
-    }
+    // if (role == ROLE_ADMIN) {
+    //   const addNewFloor = document.querySelector('.floor.add-new') as HTMLElement;
+    //   const position = data.position + (60 * index);
+    //   addNewFloor.style.top = `${position}px`;
+    // }
 });
 const onCreateRoomEvent = (room) => {
     var _a;
@@ -678,22 +670,23 @@ function appendNewFloor(floor_id, old_floor_id, name) {
     newFloorElement.setAttribute('id', `${floor_id}`);
     newFloorElement.setAttribute('class', 'floor');
     newFloorElement.setAttribute('onclick', `showFloor(${floor_id})`);
-    newFloorElement.style.backgroundColor = '#7f7f7f';
+    newFloorElement.style.backgroundColor = `rgb(252,76,86)`;
     newFloorElement.style.zIndex = '1000';
     const numberChilds = (_a = document.getElementById('floors')) === null || _a === void 0 ? void 0 : _a.children.length;
-    const addFloor = document.querySelector('.floor.add-new');
-    let position = 0;
-    if (numberChilds != null && addFloor != null) {
-        position = ((numberChilds == 1 ? 0 : numberChilds - 1) * 60);
-        newFloorElement.style.top = `${position}px`;
-        addFloor.style.top = `${position + 60}px`;
-    }
-    newFloorElement.innerHTML = `
+    // const addFloor = document.querySelector('.floors.add-new') as HTMLElement;
+    // let position = 0;
+    // if (numberChilds != null && addFloor != null) {
+    //   position = ((numberChilds == 1 ? 0 : numberChilds - 1) * 60);
+    //   newFloorElement.style.top = `${position}px`;
+    //   addFloor.style.top = `${position + 60}px`;
+    // }
+    newFloorElement.innerHTML =
+        `
                 <button onclick ="showConfirmModelFloor(event, ${floor_id})" class="remove-floor" > x </button>
                 <p>${name}</p>
                 `;
     if (numberChilds > 2) {
-        document.getElementById(`${old_floor_id}`).style.backgroundColor = '#dbdbdb';
+        document.getElementById(`${old_floor_id}`).style.backgroundColor = '#dbdbdb'; //màu floor cũ màu xám
         localStorage.setItem("floorId", floor_id);
         window.api.store('Set', { floorId: floor_id });
     }
@@ -742,16 +735,18 @@ function addFloor() {
     }
     else {
         let text = `
+
             <div class="add" id="add">
             <p>フロア名</p>
-            <div class="input" > <input type="text" id="input"> </div>
+            <div class="input"> <input type="text" id="input"> </div>
             <div class="btn">
                 <button class="cancel" onclick="cancelCreate()">キャンセル</button>
                 <button class="confirm" onclick="confirmCreate()">追加</button>
             </div>
             </div>
         `;
-        addElement(text, "add-floor");
+        addElement(text, "add-floor"); //text là modal confirm
+        console.log("2");
     }
 }
 function addWarring(text) {

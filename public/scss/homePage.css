@@ -143,10 +143,26 @@ body {
   border-radius: 15px;
   scroll-snap-align: start;
   scroll-snap-stop: normal;
+  display: inline-flex; 
+  max-width: 200px; 
+  min-width: 60px;
+  height: 30px;
+  border-radius: 15px;
+  margin: 2px 2px 2px 2px;;
+  scroll-snap-align: start;
+  scroll-snap-stop: normal;
+  vertical-align: middle; 
+  z-index: 1000;
 }
 .floor p{
   text-align: center;
   margin: auto;
+  padding: 0px 10px 0px 5px;
+}
+
+.floor .add-new{
+  position: relative;
+  right: 20px;
 }
 
 .remove-floor {
@@ -444,6 +460,7 @@ width: 115px;
   vertical-align: baseline;
   position: absolute;
   right: 5px;
+  
 }
 
 /* .user .calendar{
